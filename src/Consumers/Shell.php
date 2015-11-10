@@ -1,7 +1,7 @@
 <?php
 
 namespace WPize\Consumers;
-class Git extends Consumer_Base
+class Shell extends Consumer_Base
 {
     public function __construct($data, $base = null)
     {
