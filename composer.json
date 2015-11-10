@@ -9,7 +9,7 @@
       "name": "Mat Gargano",
       "email": "mgargano@gmail.com"
     }
-  ]
+  ],
   "autoload": {
     "psr-4" : {
       "WPize\\": "src"
