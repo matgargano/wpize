@@ -43,8 +43,7 @@ class WPize
 
             $className = '\\' . __NAMESPACE__ . '\\Consumers\\' . $type;
 
-            if (class_exists($className)) {
-                echo '12';
+            if (class_exists($className, false)) {
                 /**
                  * @var \WPize\Consumers\Consumer_Base $handle
                  */
