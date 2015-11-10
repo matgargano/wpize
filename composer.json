@@ -1,0 +1,20 @@
+{
+  "name": "morganandmorgan/wpize",
+  "description": "Bundle wordpress for deployments",
+  "homepage" : "http://forthepeople.com",
+  "type": "library",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "Mat Gargano",
+      "email": "mgargano@gmail.com"
+    }
+  ]
+  "autoload": {
+    "psr-4" : {
+      "WPize\\": "src"
+
+    }
+  }
+
+}
