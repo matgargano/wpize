@@ -10,16 +10,11 @@ class Git extends Consumer_Base
 
     public function grab()
     {
-        $repo = $this->data['retrieve']['repo'];
-        shell_exec('git clone ' . $repo . ' .');
+        $commands = $this->data['retrieve']['commands'];
         chdir($this->dir);
-        if (is_array($this->data['postCmd'])) {
-            foreach ($this->data['postCmd'] as $command) {
-                shell_exec($command);
-            }
+        foreach ($commands as $command) {
+            shell_exec($command);
         }
-
-
     }
 }
 
