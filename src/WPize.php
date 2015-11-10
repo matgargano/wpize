@@ -2,7 +2,6 @@
 
 namespace WPize;
 
-use WPize\Consumer_Base\Git;
 use \WPize\Consumers;
 
 class WPize
@@ -10,6 +9,7 @@ class WPize
 
     private $config;
     private $realBase;
+    private $piece;
 
     public function __construct(Array $config = array())
     {
@@ -24,9 +24,11 @@ class WPize
 
 
         if (!$this->config['tempBase']) {
-            $this->config['tempBase'] = self::createTempDir();
+            $this->realBase = self::createTempDir();
+        } else {
+            $this->realBase = $this->config['tempBase'];
         }
-        if (!$this->config['tempBase']) {
+        if (!$this->realBase) {
             throw new \Exception('Issue creating temporary directory');
         }
         if (is_dir($this->realBase)) {
@@ -36,29 +38,34 @@ class WPize
 
         foreach ($this->config['pieces'] as $piece) {
 
-            $type = 'Shell';
-            if (isset($piece['retrieve']['type'])) {
-                $type = $piece['retrieve']['type'];
-            }
-
-            $class = 'WPize\\Consumers\\' . $type;
-
-            if (class_exists($class)) {
-
-
-
-
-                /**
-                 * @var \WPize\Consumers\Consumer_Base $handle
-                 */
-
-                $handle = new $class($piece, $this->realBase);
-                $handle->handle();
-            }
+            $this->piece = $piece;
+            $this->processPiece();
 
 
         }
 
+
+    }
+
+    public function processPiece()
+    {
+
+        $type = 'Shell';
+        if (isset($this->piece['retrieve']['type'])) {
+            $type = $this->piece['retrieve']['type'];
+        }
+
+        $class = 'WPize\\Consumers\\' . $type;
+
+        if (class_exists($class)) {
+
+            /**
+             * @var \WPize\Consumers\Consumer_Base $handle
+             */
+
+            $handle = new $class($this->piece, $this->realBase);
+            $handle->handle();
+        }
 
     }
 
