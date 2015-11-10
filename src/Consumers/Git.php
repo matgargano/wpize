@@ -1,8 +1,6 @@
 <?php
 
-namespace WPize\Consumer_Base\Git;
-
-
+namespace WPize\Consumer_Base;
 use WPize\Consumers\Consumer_Base;
 
 class Git extends Consumer_Base
@@ -26,3 +24,6 @@ class Git extends Consumer_Base
 
     }
 }
+
+
+

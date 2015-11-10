@@ -1,7 +1,6 @@
 <?php
 
-namespace WPize\Consumer_Base\Shell;
-
+namespace WPize\Consumer_Base;
 
 use WPize\Consumers\Consumer_Base;
 

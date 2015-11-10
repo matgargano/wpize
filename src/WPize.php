@@ -2,6 +2,8 @@
 
 namespace WPize;
 
+use \WPize\Consumers;
+
 class WPize
 {
 
@@ -19,6 +21,7 @@ class WPize
     public function process()
     {
 
+
         if (!$this->config['tempBase']) {
             $this->config['tempBase'] = self::createTempDir();
         }
@@ -32,17 +35,20 @@ class WPize
 
         foreach ($this->config['pieces'] as $piece) {
 
-            $type = 'shell';
+            $type = 'Shell';
             if (isset($piece['retrieve']['type'])) {
                 $type = $piece['retrieve']['type'];
             }
 
 
-            if (class_exists($type)) {
+            $className = '\\' . __NAMESPACE__ . '\\Consumers\\' . $type;
+
+            if (class_exists($className)) {
+                echo '12';
                 /**
-                 * @var handlers $handle
+                 * @var \WPize\Consumers\Consumer_Base $handle
                  */
-                $handle = new $type($piece, $this->realBase);
+                $handle = new $className($piece, $this->realBase);
                 $handle->handle();
             }
 
@@ -86,3 +92,6 @@ class WPize
     }
 
 }
+
+
+
