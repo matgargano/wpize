@@ -67,9 +67,9 @@ abstract class Consumer_Base
 
                     $scan = scandir($actualSourcePath . '/');
 
-                    foreach ($scan as $file) {
-                        if (!is_dir($actualSourcePath . '/' . $file)) {
-                            copy($actualSourcePath . '/' . $file, $actualDestinationPath . '/' . $file);
+                    foreach ($scan as $object) {
+                        if (!is_dir($actualSourcePath . '/' . $object)) {
+                            copy($actualSourcePath . '/' . $object, $actualDestinationPath . '/' . $object);
                         }
                     }
 
