@@ -1,8 +1,6 @@
 <?php
 
-namespace WPize\Consumer_Base;
-use WPize\Consumers\Consumer_Base;
-
+namespace WPize\Consumers;
 class Git extends Consumer_Base
 {
     public function __construct($data, $base = null)

@@ -1,10 +1,7 @@
 <?php
 
-namespace WPize\Consumer_Base;
-
-use WPize\Consumers\Consumer_Base;
-
-class Shell extends Consumer_Base
+namespace WPize\Consumers;
+class Git extends Consumer_Base
 {
     public function __construct($data, $base = null)
     {
@@ -13,11 +10,18 @@ class Shell extends Consumer_Base
 
     public function grab()
     {
-        $commands = $this->data['retrieve']['commands'];
+        $repo = $this->data['retrieve']['repo'];
+        shell_exec('git clone ' . $repo . ' .');
         chdir($this->dir);
-        foreach ($commands as $command) {
-            shell_exec($command);
+        if (is_array($this->data['postCmd'])) {
+            foreach ($this->data['postCmd'] as $command) {
+                shell_exec($command);
+            }
         }
-    }
 
+
+    }
 }
+
+
+
