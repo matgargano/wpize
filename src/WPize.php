@@ -20,7 +20,10 @@ class WPize
     {
 
         if (!$this->config['tempBase']) {
-            $this->config['tempBase'] = tempdir();
+            $this->config['tempBase'] = self::createTempDir();
+        }
+        if (!$this->config['tempBase']) {
+            throw new \Exception('Issue creating temporary directory');
         }
         if (is_dir($this->realBase)) {
             $this->recursivelyRemoveBase();
@@ -67,6 +70,19 @@ class WPize
             reset($objects);
             rmdir($dir);
         }
+    }
+
+    public static function createTempDir(){
+
+        $tempfile = tempnam(sys_get_temp_dir(), '');
+        if (file_exists($tempfile)) {
+            unlink($tempfile);
+        }
+        mkdir($tempfile);
+        if (is_dir($tempfile)) {
+            return $tempfile;
+        }
+        return false;
     }
 
 }
