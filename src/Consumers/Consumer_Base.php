@@ -2,6 +2,8 @@
 
 namespace WPize\Consumers;
 
+use WPize\WPize;
+
 
 abstract class Consumer_Base
 {
@@ -19,9 +21,15 @@ abstract class Consumer_Base
         if (!$this->base) {
             $this->base = $_SERVER['HOME'];
         }
-        $this->dir = $this->base . '/wpizer/' . $this->hash;
+        $this->dir = $this->base . '/' . $this->hash;
         mkdir($this->dir, 0777, true);
         chdir($this->dir);
+
+    }
+
+    public function __destruct(){
+
+        WPIze::recursivelyRemoveDirectory($this->dir);
 
     }
 
@@ -47,7 +55,7 @@ abstract class Consumer_Base
                     $recursive = false;
                 }
                 $actualSourcePath = $this->dir . '/' . $source;
-                $actualDestinationPath = $this->base . '/wpizer/final/' . $destination;
+                $actualDestinationPath = $this->base . '/final/' . $destination;
                 if (!is_dir($actualDestinationPath)) {
                     mkdir($actualDestinationPath, 0777, true);
                 }

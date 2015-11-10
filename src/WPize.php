@@ -10,6 +10,7 @@ class WPize
     private $config;
     private $realBase;
     private $piece;
+    private $currentPostProcess;
 
     public function __construct(Array $config = array())
     {
@@ -23,8 +24,11 @@ class WPize
     {
 
 
-        if (!$this->config['tempBase']) {
+        if (!isset($this->config['tempBase']) || !$this->config['tempBase']) {
             $this->realBase = self::createTempDir();
+            chdir($this->realBase);
+            mkdir('wpize');
+            $this->realBase .= '/wpize';
         } else {
             $this->realBase = $this->config['tempBase'];
         }
@@ -43,7 +47,43 @@ class WPize
 
 
         }
+        $this->postProcess();
 
+
+    }
+
+    public function postProcess()
+    {
+
+        if (!isset($this->config['post']) || !is_array($this->config['post'])) {
+            return;
+        }
+
+        foreach($this->config['post'] as $post) {
+
+            $this->currentPostProcess = $post;
+            $this->processPostStep();
+
+
+        }
+
+    }
+
+    public function processPostStep(){
+
+
+        $class = 'WPize\\Post_Process\\' . $this->currentPostProcess['type'];
+
+        if (class_exists($class)) {
+
+            /**
+             * @var \WPize\Post_Process\Post_Process_Base $handle
+             */
+
+            $handle = new $class($this->currentPostProcess, $this->realBase);
+            $handle->handle();
+            $handle = null; //destruct the object to clear the directory
+        }
 
     }
 
@@ -65,6 +105,7 @@ class WPize
 
             $handle = new $class($this->piece, $this->realBase);
             $handle->handle();
+            $handle = null; //destruct the object to clear the directory
         }
 
     }
