@@ -2,6 +2,7 @@
 
 namespace WPize;
 
+use WPize\Consumer_Base\Git;
 use \WPize\Consumers;
 
 class WPize
@@ -40,14 +41,18 @@ class WPize
                 $type = $piece['retrieve']['type'];
             }
 
+            $class = 'WPize\\Consumers\\' . $type;
 
-            $className = '\\' . __NAMESPACE__ . '\\Consumers\\' . $type;
+            if (class_exists($class)) {
 
-            if (class_exists($className, false)) {
+
+
+
                 /**
                  * @var \WPize\Consumers\Consumer_Base $handle
                  */
-                $handle = new $className($piece, $this->realBase);
+
+                $handle = new $class($piece, $this->realBase);
                 $handle->handle();
             }
 
@@ -77,7 +82,8 @@ class WPize
         }
     }
 
-    public static function createTempDir(){
+    public static function createTempDir()
+    {
 
         $tempfile = tempnam(sys_get_temp_dir(), '');
         if (file_exists($tempfile)) {
