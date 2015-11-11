@@ -15,6 +15,7 @@ class WPize
     private $buildDir;
     private $currentBuildStepName;
     private $currentDirectory;
+    private $previousBuildDirectory;
 
     public function __construct(Array $config = array())
     {
@@ -28,6 +29,13 @@ class WPize
     {
 
 
+        $this->setupDirectories();
+        $this->processSteps();
+
+
+    }
+
+    public function setupDirectories(){
         if (!isset($this->config['tempBase']) || !$this->config['tempBase']) {
             $this->realBase = Utils::createTempDir();
             chdir($this->realBase);
@@ -45,19 +53,27 @@ class WPize
         }
 
 
+
+    }
+
+    public function processSteps(){
+
         foreach ($this->config['build'] as $stepName => $buildSteps) {
             $this->currentBuildStepName = $stepName;
             $this->currentDirectory = $this->realBase . '/' . $this->currentBuildStepName;
+            $counter = 1;
+            $numberSteps = count($buildSteps);
             foreach ($buildSteps as $step) {
-
+                $counter++;
+                if ($counter === $numberSteps) {
+                    $this->previousBuildDirectory = $this->currentDirectory;
+                }
                 $this->step = $step;
                 $this->buildDir = $this->processStep();
 
 
             }
         }
-
-
     }
 
 
@@ -78,14 +94,14 @@ class WPize
              */
 
 
-            $handle = new $class($this->step, $this->realBase . '/' . $this->currentBuildStepName);
+            $handle = new $class($this->step, $this->currentDirectory);
             $handle->handle();
             $handle = null; //destruct the object to clear the directory
 
         } else {
             throw new \Exception('Cannot find a class to handle $type in namespace Wpize\\Consumers\\');
         }
-        return $this->realBase;
+        return $this->currentDirectory;
 
 
     }
