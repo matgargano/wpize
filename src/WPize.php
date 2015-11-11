@@ -93,12 +93,7 @@ class WPize
             $handle = new $class($this->piece, $this->realBase);
             $handle->handle();
             $handle = null; //destruct the object to clear the directory
-	        if ( 'Git' == $type ) {
-		        static::$counter++;
-		        if ( static::$counter > 2 ) {
-			        die;
-		        }
-	        }
+	        
         }
 
     }
