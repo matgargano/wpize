@@ -13,7 +13,7 @@ class Git extends Consumer_Base
         $repo = $this->data['retrieve']['repo'];
         shell_exec('git clone ' . $repo . ' .');
         chdir($this->dir);
-        if (is_array($this->data['postCmd'])) {
+        if (isset($this->data['postCmd']) && is_array($this->data['postCmd'])) {
             foreach ($this->data['postCmd'] as $command) {
                 shell_exec($command);
             }

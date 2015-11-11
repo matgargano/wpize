@@ -2,7 +2,7 @@
 
 namespace WPize\Consumers;
 
-use WPize\WPize;
+use WPize\Utils\Utils;
 
 
 abstract class Consumer_Base
@@ -29,7 +29,7 @@ abstract class Consumer_Base
 
     public function __destruct(){
 
-        WPIze::recursivelyRemoveDirectory($this->dir);
+        Utils::recursivelyRemoveDirectory($this->dir);
 
     }
 
@@ -62,7 +62,7 @@ abstract class Consumer_Base
 
                 if ($recursive) {
 
-                    self::recursivelyCopy($actualSourcePath, $actualDestinationPath);
+                    Utils::recursivelyCopy($actualSourcePath, $actualDestinationPath);
                 } else {
 
                     $scan = scandir($actualSourcePath . '/');
@@ -80,23 +80,7 @@ abstract class Consumer_Base
         }
     }
 
-    public static function recursivelyCopy($src, $dst)
-    {
-        $dir = opendir($src);
-        if (!is_dir($dst)) {
-            mkdir($dst);
-        }
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    self::recursivelyCopy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
-    }
+
 
 
 }

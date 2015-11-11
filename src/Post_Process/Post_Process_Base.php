@@ -16,23 +16,6 @@ abstract class Post_Process_Base {
 
     abstract public function handle();
 
-    public static function recursivelyCopy($src, $dst)
-    {
-        $dir = opendir($src);
-        if (!is_dir($dst)) {
-            mkdir($dst);
-        }
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    self::recursivelyCopy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
-    }
 
 
 }

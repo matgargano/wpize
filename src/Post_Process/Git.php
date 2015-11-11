@@ -2,6 +2,8 @@
 
 namespace WPize\Post_Process;
 
+use WPize\Utils\Utils;
+
 class Git extends Post_Process_Base
 {
 
@@ -18,7 +20,7 @@ class Git extends Post_Process_Base
             if (method_exists($this, $method)) {
                 $this->$method();
             } else {
-                throw new \Exception('Merge method not supported ' . $method);
+                throw new \Exception('Merge methoes not supported ' . $method);
             }
 
         }
@@ -37,7 +39,7 @@ class Git extends Post_Process_Base
                 continue;
             }
             if (is_dir($this->base . '/' . $object)) {
-                self::recursivelyCopy($this->base . '/' . $object, $this->base . '/interim' . $object);
+                Utils::recursivelyCopy($this->base . '/' . $object, $this->base . '/interim' . $object, array( 'directories' => '.git' ));
             } else {
                 copy($this->base . '/' . $object, $this->base . '/interim' . $object);
             }
@@ -54,23 +56,22 @@ class Git extends Post_Process_Base
     public function force(){
 
         chdir($this->base);
-        exec('git clone ' . $this->data['repoSource'] . ' ' . $this->base . '/source');
-        exec('git clone ' . $this->data['repoDestination'] . ' ' . $this->base . '/destination');
+        exec('git clone ' . $this->data['repoSource'] . ' ' . $this->base . '/source/');
+        exec('git clone ' . $this->data['repoDestination'] . ' ' . $this->base . '/destination/');
 
 
-        $scan = scandir($this->base . '/source');
+        $scan = scandir($this->base . '/source/');
         foreach ($scan as $object) {
             if (in_array($object, array('.', '..'))) {
                 continue;
             }
             if (is_dir($this->base . '/source/' . $object)) {
-                self::recursivelyCopy($this->base . '/source/' . $object, $this->base . '/destination' . $object);
+	            Utils::recursivelyCopy( $this->base . '/source/' . $object, $this->base . '/destination/' . $object, array( 'directories' => '.git' ) );
             } else {
-                copy($this->base . '/source/' . $object, $this->base . '/destination' . $object);
+                copy($this->base . '/source/' . $object, $this->base . '/destination/' . $object);
             }
         }
-        chdir($this->base . '/destination');
-        echo PHP_EOL . PHP_EOL . $this->base . '/destination' . PHP_EOL . PHP_EOL;
+        chdir($this->base . '/destination/');
         exec('git add .');
         exec('git commit -am "Pushing up ' . date('YmdHis') . ' deploy"');
         exec('git tag -a ' . date('YmdHis'). ' -m " Tagging the ' . date('YmdHis') . ' deploy"');

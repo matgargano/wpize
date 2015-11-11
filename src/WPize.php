@@ -32,6 +32,7 @@ class WPize
         } else {
             $this->realBase = $this->config['tempBase'];
         }
+	    self::recursivelyRemoveDirectory($this->realBase);
         if (!$this->realBase) {
             throw new \Exception('Issue creating temporary directory');
         }
@@ -116,33 +117,7 @@ class WPize
         self::recursivelyRemoveDirectory($this->realBase);
     }
 
-    public static function recursivelyRemoveDirectory($dir)
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype($dir . "/" . $object) == "dir") self::recursivelyRemoveDirectory($dir . "/" . $object); else unlink($dir . "/" . $object);
-                }
-            }
-            reset($objects);
-            rmdir($dir);
-        }
-    }
 
-    public static function createTempDir()
-    {
-
-        $tempfile = tempnam(sys_get_temp_dir(), '');
-        if (file_exists($tempfile)) {
-            unlink($tempfile);
-        }
-        mkdir($tempfile);
-        if (is_dir($tempfile)) {
-            return $tempfile;
-        }
-        return false;
-    }
 
 }
 
