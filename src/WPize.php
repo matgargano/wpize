@@ -13,6 +13,7 @@ class WPize
     private $realBase;
     private $piece;
     private $currentPostProcess;
+	private $buildDir;
 
     public function __construct(Array $config = array())
     {
@@ -46,7 +47,7 @@ class WPize
         foreach ($this->config['pieces'] as $piece) {
 
             $this->piece = $piece;
-            $this->processPiece();
+            $this->buildDir = $this->processPiece();
 
 
         }
@@ -90,11 +91,13 @@ class WPize
              * @var \WPize\Consumers\Consumer_Base $handle
              */
 
-            $handle = new $class($this->piece, $this->realBase);
+            $handle = new $class($this->piece, $this->realBase . '/build');
             $handle->handle();
             $handle = null; //destruct the object to clear the directory
-	        
+
         }
+	    return $this->realBase;
+
 
     }
 

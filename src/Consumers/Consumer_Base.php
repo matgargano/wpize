@@ -64,7 +64,7 @@ abstract class Consumer_Base
                     $recursive = false;
                 }
                 $actualSourcePath = $this->dir . '/' . $source;
-                $actualDestinationPath = $this->base . '/build/' . $destination;
+                $actualDestinationPath = $this->base . '/' . $destination;
 	            if (!is_dir($actualDestinationPath)) {
                     mkdir($actualDestinationPath, 0777, true);
                 }
