@@ -8,12 +8,13 @@ use WPize\Utils\Utils;
 class WPize
 {
 
-	static $counter = 0;
+
     private $config;
     private $realBase;
-    private $piece;
-    private $currentPostProcess;
-	private $buildDir;
+    private $step;
+    private $buildDir;
+    private $currentBuildStepName;
+    private $currentDirectory;
 
     public function __construct(Array $config = array())
     {
@@ -35,7 +36,7 @@ class WPize
         } else {
             $this->realBase = $this->config['tempBase'];
         }
-	    Utils::recursivelyRemoveDirectory($this->realBase);
+        Utils::recursivelyRemoveDirectory($this->realBase);
         if (!$this->realBase) {
             throw new \Exception('Issue creating temporary directory');
         }
@@ -44,43 +45,28 @@ class WPize
         }
 
 
-        foreach ($this->config['pieces'] as $piece) {
+        foreach ($this->config['build'] as $stepName => $buildSteps) {
+            $this->currentBuildStepName = $stepName;
+            $this->currentDirectory = $this->realBase . '/' . $this->currentBuildStepName;
+            foreach ($buildSteps as $step) {
 
-            $this->piece = $piece;
-            $this->buildDir = $this->processPiece();
+                $this->step = $step;
+                $this->buildDir = $this->processStep();
 
 
+            }
         }
-        $this->postProcess();
 
 
     }
 
-    public function postProcess()
-    {
 
-        if (!isset($this->config['post']) || !is_array($this->config['post'])) {
-            return;
-        }
-
-        foreach($this->config['post'] as $post) {
-
-            $this->currentPostProcess = $post;
-            $this->processPostStep();
-
-
-        }
-
-    }
-
-
-
-    public function processPiece()
+    public function processStep()
     {
 
         $type = 'Shell';
-        if (isset($this->piece['retrieve']['type'])) {
-            $type = $this->piece['retrieve']['type'];
+        if (isset($this->step['retrieve']['type'])) {
+            $type = $this->step['retrieve']['type'];
         }
 
         $class = 'WPize\\Consumers\\' . $type;
@@ -91,40 +77,25 @@ class WPize
              * @var \WPize\Consumers\Consumer_Base $handle
              */
 
-            $handle = new $class($this->piece, $this->realBase . '/build');
+
+            $handle = new $class($this->step, $this->realBase . '/' . $this->currentBuildStepName);
             $handle->handle();
             $handle = null; //destruct the object to clear the directory
 
+        } else {
+            throw new \Exception('Cannot find a class to handle $type in namespace Wpize\\Consumers\\');
         }
-	    return $this->realBase;
+        return $this->realBase;
 
 
     }
 
-	public function processPostStep(){
-
-
-		$class = 'WPize\\Post_Process\\' . $this->currentPostProcess['type'];
-
-		if (class_exists($class)) {
-
-			/**
-			 * @var \WPize\Post_Process\Post_Process_Base $handle
-			 */
-
-			$handle = new $class($this->currentPostProcess, $this->realBase);
-			$handle->handle();
-			$handle = null; //destruct the object to clear the directory
-		}
-
-	}
 
     public function recursivelyRemoveBase()
     {
 
         Utils::recursivelyRemoveDirectory($this->realBase);
     }
-
 
 
 }
