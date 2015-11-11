@@ -3,6 +3,7 @@
 namespace WPize;
 
 use \WPize\Consumers;
+use WPize\Utils\Utils;
 
 class WPize
 {
@@ -25,14 +26,14 @@ class WPize
 
 
         if (!isset($this->config['tempBase']) || !$this->config['tempBase']) {
-            $this->realBase = self::createTempDir();
+            $this->realBase = Utils::createTempDir();
             chdir($this->realBase);
             mkdir('wpize');
             $this->realBase .= '/wpize';
         } else {
             $this->realBase = $this->config['tempBase'];
         }
-	    self::recursivelyRemoveDirectory($this->realBase);
+	    Utils::recursivelyRemoveDirectory($this->realBase);
         if (!$this->realBase) {
             throw new \Exception('Issue creating temporary directory');
         }
@@ -114,7 +115,7 @@ class WPize
     public function recursivelyRemoveBase()
     {
 
-        self::recursivelyRemoveDirectory($this->realBase);
+        Utils::recursivelyRemoveDirectory($this->realBase);
     }
 
 
