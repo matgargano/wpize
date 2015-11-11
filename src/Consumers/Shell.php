@@ -15,6 +15,8 @@ class Shell extends Consumer_Base
         foreach ($commands as $command) {
             shell_exec($command);
         }
+
+
     }
 }
 

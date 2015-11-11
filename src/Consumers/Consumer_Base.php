@@ -45,6 +45,15 @@ abstract class Consumer_Base
 
     public function process()
     {
+
+	    if ( isset($this->data['kill']) && is_array($this->data['kill'])) {
+		    foreach($this->data['kill'] as $kill) {
+
+
+			    Utils::recursivelyRemoveDirectory($this->dir . '/' . $kill);
+		    }
+	    }
+
         if (is_array($this->data['keep'])) {
             foreach ($this->data['keep'] as $keepArray) {
 
@@ -55,8 +64,8 @@ abstract class Consumer_Base
                     $recursive = false;
                 }
                 $actualSourcePath = $this->dir . '/' . $source;
-                $actualDestinationPath = $this->base . '/final/' . $destination;
-                if (!is_dir($actualDestinationPath)) {
+                $actualDestinationPath = $this->base . '/build/' . $destination;
+	            if (!is_dir($actualDestinationPath)) {
                     mkdir($actualDestinationPath, 0777, true);
                 }
 
@@ -78,6 +87,7 @@ abstract class Consumer_Base
 
             }
         }
+
     }
 
 

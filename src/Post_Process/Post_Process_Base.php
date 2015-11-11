@@ -10,7 +10,7 @@ abstract class Post_Process_Base {
     public function __construct($data, $base = null) {
 
         $this->data = $data;
-        $this->base = $base . '/final';
+        $this->base = $base;
 
     }
 

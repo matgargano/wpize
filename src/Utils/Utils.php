@@ -35,17 +35,22 @@ class Utils {
 		return false;
 	}
 
-	public static function recursivelyCopy($src, $dst, Array $exceptions = array() )
+	public static function recursivelyCopy($src, $dst, $skipHidden = false )
 	{
 		$dir = opendir($src);
 		if (!is_dir($dst)) {
 			mkdir($dst);
 		}
 		while (false !== ($file = readdir($dir))) {
-			if ( ( $file != '.' ) && ( $file != '..' ) && ( ! is_array( $exceptions ) || ( isset( $exceptions['directories'] ) && ! in_array( $file, $exceptions['directories'] ) ) ) ) {
+			if ( $skipHidden && '.' == substr( $file, 0, 1 ) ) {
+
+				continue;
+			}
+			if ( ( $file != '.' ) && ( $file != '..' ) ) {
+
 				if (is_dir($src . '/' . $file)) {
-					self::recursivelyCopy( $src . '/' . $file, $dst . '/' . $file, $exceptions );
-				} elseif ( is_array( $exceptions ) && isset( $exceptions['files'] ) && ! in_array( $file, $exceptions['files'] ) ) {
+					self::recursivelyCopy( $src . '/' . $file, $dst . '/' . $file, $skipHidden );
+				} else {
 
 					copy($src . '/' . $file, $dst . '/' . $file);
 				}
